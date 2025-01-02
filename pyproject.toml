@@ -1,7 +1,7 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
+# Define the build dependencies for both Python and Rust
+requires = ["poetry-core>=1.0.0", "maturin>=0.14,<0.15"]
+build-backend = "maturin"
 
 [tool.poetry]
 name = "swarms"
@@ -32,7 +32,6 @@ keywords = [
     "Transformers",
     "LLMs",
     "Prompt Engineering",
-    "Agents",
     "Generative Agents",
     "Generative AI",
     "Agent Marketplace",
@@ -54,11 +53,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 
-
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-# torch = ">=2.1.1,<3.0"
-# transformers = ">= 4.39.0, <5.0.0"
 asyncio = ">=3.4.3,<4.0"
 toml = "*"
 pypdf = "5.1.0"
@@ -75,37 +71,10 @@ tiktoken = "*"
 networkx = "*"
 aiofiles = "*"
 clusterops = "*"
-# chromadb = "*"
 rich = "*"
-# sentence-transformers = "*"
-
-
-# [tool.poetry.extras]
-# # Extra for NLP-related functionalities
-# nlp = [
-#     "torch>=2.1.1,<3.0",
-#     "transformers>=4.39.0,<5.0.0",
-#     "sentence-transformers",
-#     "swarm-models",
-# ]
-
-# # Extra for database-related functionalities
-# db = ["chromadb"]
-
-# # All optional dependencies for convenience
-# all = [
-#     "torch>=2.1.1,<3.0",
-#     "transformers>=4.39.0,<5.0.0",
-#     "sentence-transformers",
-#     "chromadb",
-#     "swarm-models"
-# ]
-
-
 
 [tool.poetry.scripts]
 swarms = "swarms.cli.main:main"
-
 
 [tool.poetry.group.lint.dependencies]
 black = ">=23.1,<25.0"
@@ -114,7 +83,6 @@ types-toml = "^0.10.8.1"
 types-pytz = ">=2023.3,<2025.0"
 types-chardet = "^5.0.4.6"
 mypy-protobuf = "^3.0.0"
-
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.1.1"
@@ -141,3 +109,6 @@ exclude = '''
 )/
 '''
 
+# Add the Maturin tool section with the correct module name
+[tool.maturin]
+module-name = "swarms_rs"  # Correct the module name (underscores, not hyphens)

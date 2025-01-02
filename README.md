@@ -1982,3 +1982,155 @@ Join our growing community around the world, for real-time support, ideas, and d
 # License
 
 GNU AFFERO GENERAL PUBLIC LICENSE
+
+
+
+===================================================================================================================================
+
+
+# Swarms-RS: Rust Integration with Maturin and PyO3
+
+This repository demonstrates how to integrate Rust code with Python using **Maturin** and **PyO3**. By leveraging Maturin, Python programs can call Rust code directly as a shared library, allowing for efficient performance gains. This guide covers how the Rust library is initialized, the requirements for setting up the environment, the steps to install and develop locally, and the overall workflow.
+
+## Table of Contents
+1. [Requirements](#requirements)
+2. [Setting Up the Project](#setting-up-the-project)
+3. [First-Time Setup](#first-time-setup)
+4. [Developer Workflow](#developer-workflow)
+5. [How Python Calls Rust Code](#how-python-calls-rust-code)
+6. [Troubleshooting](#troubleshooting)
+
+## Requirements
+
+Before starting, make sure you have the following tools installed on your machine:
+
+1. **Python 3.10 or higher**:
+   - Python should be installed and accessible via your terminal.
+
+2. **Rust**:
+   - You need the Rust toolchain installed. To install Rust, use the following command:
+     ```bash
+     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+     ```
+
+3. **Maturin**:
+   - Maturin is used to build and manage Rust extensions for Python. You can install Maturin using `pip`:
+     ```bash
+     pip install maturin
+     ```
+
+4. **Poetry (optional, for dependency management)**:
+   - While not strictly necessary, Poetry is recommended for managing dependencies in the Python environment:
+     ```bash
+     pip install poetry
+     ```
+
+## Setting Up the Project
+
+1. **Clone the Repository**:
+   First, clone the repository to your local machine:
+   ```bash
+   git clone https://github.com/your-username/swarms-rs.git
+   cd swarms-rs
+Configure the Python Environment: If you're using Poetry, create and activate a virtual environment:
+
+bash
+Copy code
+poetry install
+Rust and Maturin Setup:
+
+The pyproject.toml is configured to use Maturin as the build backend. This ensures that the Rust code will be compiled and linked into a Python extension when the package is installed.
+The Rust source code is located in the src/ directory. It is set up as a Rust library that is callable from Python using PyO3.
+First-Time Setup
+Install the Package in Editable Mode: To install the package in editable mode (for development), run the following command:
+
+bash
+Copy code
+pip install -e .
+This will:
+
+Compile the Rust code using Maturin.
+Install the package in your Python environment in editable mode, so changes to the Rust code are immediately reflected.
+Verify the Installation: After installation, you can verify the Rust extension by running the Python interpreter:
+
+bash
+Copy code
+python
+>>> import swarms_rs
+>>> swarms_rs.some_function()  # Replace with actual function from your Rust code
+Developer Workflow
+The developer workflow for working with this repository involves the following steps:
+
+Edit Rust Code: The Rust code is located in the src/lib.rs file. You can add new functionality or modify existing code here.
+
+Build the Extension: After making changes to the Rust code, you need to rebuild the extension. You can do this by running:
+
+bash
+Copy code
+maturin develop
+This will rebuild the Rust extension and install it into the Python environment.
+
+Test the Rust Code in Python: After rebuilding, you can call the updated Rust functions from Python as usual:
+
+python
+Copy code
+import swarms_rs
+swarms_rs.some_function()
+Install the Package (Editable Mode): If you want the package to be reinstalled in editable mode after modifications, run:
+
+bash
+Copy code
+pip install -e .
+This will ensure that any changes to the Rust code are automatically reflected in your Python environment.
+
+Removing Compiled Files: If you want to start fresh and remove all compiled Rust files, simply delete the target/ directory:
+
+bash
+Copy code
+rm -rf target/
+Then, recompile the project with maturin develop or pip install -e ..
+
+Updating the Python Interface: If you've added new functions or modified the Python interface to the Rust library, make sure to update any necessary Python wrappers in src/lib.rs. The #[pyfunction] and #[pymodule] macros in PyO3 will expose Rust functions to Python.
+
+How Python Calls Rust Code
+Using PyO3: PyO3 allows you to write native Rust functions and expose them as Python-callable functions. You can define functions in Rust using the #[pyfunction] macro, and then add them to a Python module using the #[pymodule] macro.
+
+Example Rust code:
+
+rust
+Copy code
+use pyo3::prelude::*;
+
+#[pyfunction]
+fn my_function(a: i32) -> i32 {
+    a * 2
+}
+
+#[pymodule]
+fn swarms_rs(py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(my_function, m)?)?;
+    Ok(())
+}
+Python Code: Once the Rust extension is compiled and installed, you can call the Rust functions from Python:
+
+python
+Copy code
+import swarms_rs
+
+result = swarms_rs.my_function(5)
+print(result)  # Output: 10
+Troubleshooting
+Maturin Build Issues:
+
+If maturin develop fails, ensure that your pyproject.toml file is correctly configured and that all dependencies are installed.
+Check the Rust toolchain version (rustc --version) and ensure it's compatible with the version of Maturin you're using.
+Rust Compilation Errors:
+
+Rust errors will typically show up during the build process. You can address these by reviewing the error messages and ensuring that the Rust code is valid.
+Python Import Errors:
+
+If Python cannot import the compiled Rust extension, ensure that it is properly installed in the Python environment. Try uninstalling and reinstalling the package with:
+bash
+Copy code
+pip uninstall swarms-rs
+pip install -e .
